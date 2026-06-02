@@ -16,7 +16,7 @@ public sealed class SpeedyShopDbContext(DbContextOptions<SpeedyShopDbContext> op
     {
         modelBuilder.Entity<Product>().Property(p => p.Price).HasColumnType("decimal(18,2)");
         modelBuilder.Entity<Product>().Property(p => p.Description).HasMaxLength(8000);
-        modelBuilder.Entity<Product>().Property(p => p.MetadataJson).HasColumnType("nvarchar(max)");
+        modelBuilder.Entity<Product>().Property(p => p.MetadataJson);
         modelBuilder.Entity<Order>().Property(o => o.Total).HasColumnType("decimal(18,2)");
         modelBuilder.Entity<OrderItem>().Property(i => i.UnitPrice).HasColumnType("decimal(18,2)");
         modelBuilder.Entity<Review>().Property(r => r.Body).HasMaxLength(4000);

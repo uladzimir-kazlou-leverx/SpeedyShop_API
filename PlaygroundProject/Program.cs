@@ -50,6 +50,12 @@ builder.Services.AddMemoryCache();
 
 var otlpEndpoint = builder.Configuration["OpenTelemetry:OtlpEndpoint"];
 
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.ReferenceHandler =
+        System.Text.Json.Serialization.ReferenceHandler.Preserve;
+});
+
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService("SpeedyShop.Api", serviceVersion: "1.0.0-workshop"))
     .WithTracing(tracing =>

@@ -25,7 +25,35 @@ public sealed class ProductWorkshopService(SpeedyShopDbContext db, IExternalCata
             // WORKSHOP: Performance Issue - sync-over-async inside request processing blocks worker threads.
             var supplierStatus = externalCatalogClient.GetSupplierStatusAsync(product.Id).Result;
 
-            response.Add(new { Product = product, Category = category, Reviews = reviews, SupplierStatus = supplierStatus });
+            response.Add(new
+            {
+                Product = new
+                {
+                    product.Id,
+                    product.Name,
+                    product.Sku,
+                    product.Price,
+                    product.CategoryId,
+                    product.CreatedAt
+                },
+                Category = new
+                {
+                    category.Id,
+                    category.Name,
+                    category.Description
+                },
+                Reviews = reviews.Select(review => new
+                {
+                    review.Id,
+                    review.ProductId,
+                    review.CustomerId,
+                    review.Rating,
+                    review.Title,
+                    review.Body,
+                    review.CreatedAt
+                }),
+                SupplierStatus = supplierStatus
+            });
         }
 
         return response;
