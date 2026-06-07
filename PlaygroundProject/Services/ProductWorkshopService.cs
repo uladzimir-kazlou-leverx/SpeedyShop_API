@@ -61,10 +61,23 @@ public sealed class ProductWorkshopService(SpeedyShopDbContext db, IExternalCata
 
     public async Task<IReadOnlyList<object>> GetPopularProductsAsync(int take)
     {
-        // WORKSHOP: Performance Issue - expensive aggregate is recomputed for every request; no IMemoryCache or Redis cache.
-        return await db.OrderItems
+        var grouped = await db.OrderItems
             .GroupBy(i => i.ProductId)
-            .Select(g => new { ProductId = g.Key, UnitsSold = g.Sum(i => i.Quantity), Revenue = g.Sum(i => i.Quantity * i.UnitPrice) })
+            .Select(g => new
+            {
+                ProductId = g.Key,
+                UnitsSold = g.Sum(i => i.Quantity),
+                Revenue = g.Select(i => i.Quantity * i.UnitPrice).ToList()
+            })
+            .ToListAsync();
+        // WORKSHOP: Performance Issue - expensive aggregate is recomputed for every request; no IMemoryCache or Redis cache.
+        return grouped
+            .Select(g => new
+            {
+                g.ProductId,
+                g.UnitsSold,
+                Revenue = g.Revenue.Sum()
+            })
             .OrderByDescending(x => x.UnitsSold)
             .Take(take)
             .Join(db.Products, x => x.ProductId, p => p.Id, (x, p) => new
@@ -75,7 +88,7 @@ public sealed class ProductWorkshopService(SpeedyShopDbContext db, IExternalCata
                 ReviewCount = db.Reviews.Count(r => r.ProductId == p.Id)
             })
             .Cast<object>()
-            .ToListAsync();
+            .ToList();
     }
 
     public async Task<IReadOnlyList<object>> SearchInefficientlyAsync(string term)

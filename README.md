@@ -80,7 +80,7 @@ Separate participant task descriptions are available in [`workshop-tasks/`](work
 | Large payloads | Product details/order history | High network and JSON serialization time | Smaller DTOs, pagination |
 | No response compression | `Program.cs` | Large payload transfer time | Add Brotli/Gzip response compression |
 
-## Workshop flow for instructors
+## Workshop flow
 
 1. For the simplest setup, run the API directly and let SQLite be created automatically.
 2. For SQL Server/Aspire, start services with `docker compose up -d` and set `Database__Provider=SqlServer`.

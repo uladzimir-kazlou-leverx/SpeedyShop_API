@@ -10,6 +10,10 @@ Recommended workflow for every task:
 4. Implement the smallest fix.
 5. Rerun the same measurement and compare before/after numbers.
 
+## Pre-Task
+
+0. [OpenTelemetry Service Tracing](00-opentelemetry-service-tracing.md)
+
 ## Tasks
 
 1. [N+1 Database Queries](01-n-plus-one-queries.md)

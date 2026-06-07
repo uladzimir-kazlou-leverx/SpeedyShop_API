@@ -1,6 +1,6 @@
 const { performance } = require('node:perf_hooks');
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+const baseUrl = 'http://localhost:5000';
 const durationSeconds = Number(process.env.DURATION_SECONDS || 120);
 const concurrency = Number(process.env.CONCURRENCY || 25);
 const thinkTimeMs = Number(process.env.THINK_TIME_MS || 250);
@@ -62,6 +62,8 @@ async function worker(workerId, stopAt) {
       status = response.status;
       await response.arrayBuffer();
     } catch (exception) {
+      console.error('Fetch failed:', exception);
+      console.error('Cause:', exception.cause);
       error = exception;
     }
 
@@ -85,7 +87,7 @@ async function main() {
   const progress = setInterval(() => {
     const elapsedSeconds = Math.max(1, durationSeconds - Math.ceil((stopAt - Date.now()) / 1000));
     const rps = stats.total / elapsedSeconds;
-    console.log(`progress: requests=${stats.total}, failed=${stats.failed}, rps=${rps.toFixed(1)}, p95=${percentile(stats.durations, 95).toFixed(0)}ms`);
+    console.log(`progress: requests=${stats.total}, failed=${stats.failed}, rps=${rps.toFixed(1)}, p95=${percentile(stats.durations, 95).toFixed(0)}ms, p99=${percentile(stats.durations, 99).toFixed(0)}ms`);
   }, 5000);
 
   await Promise.all(Array.from({ length: concurrency }, (_, index) => worker(index + 1, stopAt)));
