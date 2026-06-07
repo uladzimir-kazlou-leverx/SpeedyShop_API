@@ -4,3 +4,10 @@
 
 /PlaygroundProject
 /.vs
+/.artifacts/validation-build
+/.build-verify
+/.build-verify-memorycache
+/.build-verify-node-loadtest
+/.build-verify-sqlite
+/.build-verify-sqlite2
+/.build-verify-workshop-tasks
